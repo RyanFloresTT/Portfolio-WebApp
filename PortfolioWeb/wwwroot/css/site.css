@@ -16,3 +16,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.absolute-brand {
+    position: absolute;
+    left: 1%;
+    top: 15%;
+}
+
