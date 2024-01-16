@@ -9,5 +9,7 @@ namespace PortfolioWeb.Data
         }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<PortfolioWeb.Models.BlogPost> BlogPost { get; set; } = default!;
+        public DbSet<PortfolioWeb.Models.Project> Project { get; set; } = default!;
     }
 }
