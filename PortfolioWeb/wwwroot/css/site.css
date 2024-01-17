@@ -22,4 +22,13 @@ body {
     left: 1%;
     top: 15%;
 }
+.card-link {
+    text-decoration: none;
+    color: black;
+    transition: color 1s ease;
+}
+
+.card-link:hover {
+    color: #3366cc;
+}
 
