@@ -16,3 +16,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.absolute-brand {
+    position: absolute;
+    left: 1%;
+    top: 15%;
+}
+.card-link {
+    text-decoration: none;
+    color: black;
+    transition: color 1s ease;
+}
+
+.card-link:hover {
+    color: #3366cc;
+}
+

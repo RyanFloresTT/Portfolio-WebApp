@@ -5,6 +5,14 @@
       "PackagePath": "staticwebassets\\PortfolioWeb.bundle.scp.css"
     },
     {
+      "Id": "E:\\vsprac\\Portfolio\\PortfolioWeb\\wwwroot\\assets\\pfp-removebg-preview.png",
+      "PackagePath": "staticwebassets\\assets\\pfp-removebg-preview.png"
+    },
+    {
+      "Id": "E:\\vsprac\\Portfolio\\PortfolioWeb\\wwwroot\\css\\bootstrap_personal.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap_personal.css"
+    },
+    {
       "Id": "E:\\vsprac\\Portfolio\\PortfolioWeb\\wwwroot\\css\\bootswatch_quartz.css",
       "PackagePath": "staticwebassets\\css\\bootswatch_quartz.css"
     },

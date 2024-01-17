@@ -22,7 +22,7 @@ namespace PortfolioWeb.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.ToListAsync());
+            return View(await _context.Project.Include(p => p.BlogPosts).ToListAsync());
         }
 
         // GET: Projects/Details/5
