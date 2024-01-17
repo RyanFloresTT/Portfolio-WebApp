@@ -12,13 +12,26 @@ namespace PortfolioWeb.Controllers
         {
             _logger = logger;
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        [Route("/Resume")]
+        public IActionResult Resume()
+        {
+            return View();
+        }
+        [Route("/Contact")]
+        public IActionResult Contact()
+        {
+            return View();
+        }
+        [Route("/About")]
+        public IActionResult About()
         {
             return View();
         }
