@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PortfolioWeb.Data;
@@ -6,22 +10,22 @@ using PortfolioWeb.Models;
 
 namespace PortfolioWeb.Controllers
 {
-    public class ProjectsController : Controller
+    public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProjectsController(ApplicationDbContext context)
+        public TagsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Projects
+        // GET: Tags
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.Include(p => p.BlogPosts).ToListAsync());
+            return View(await _context.Tag.ToListAsync());
         }
 
-        // GET: Projects/Details/5
+        // GET: Tags/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -29,45 +33,39 @@ namespace PortfolioWeb.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .Include(b => b.Tags)   
+            var tag = await _context.Tag
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(tag);
         }
 
-        // GET: Projects/Create
+        // GET: Tags/Create
         public IActionResult Create()
         {
-            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View();
         }
 
-        // POST: Projects/Create
+        // POST: Tags/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Body,Summary,RepoLink,CreatedAt,TagIds")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Tag tag)
         {
             if (ModelState.IsValid)
             {
-                var selectedTags = await _context.Tag.Where(tag => project.TagIds.Contains(tag.Id)).ToListAsync();
-                project.TagIds = selectedTags.Select(tag => tag.Id).ToList();
-                project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
-                _context.Add(project);
+                _context.Add(tag);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
-            return View(project);
+            return View(tag);
         }
 
-        // GET: Projects/Edit/5
+        // GET: Tags/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,23 +73,22 @@ namespace PortfolioWeb.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project.FindAsync(id);
-            if (project == null)
+            var tag = await _context.Tag.FindAsync(id);
+            if (tag == null)
             {
                 return NotFound();
             }
-            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
-            return View(project);
+            return View(tag);
         }
 
-        // POST: Projects/Edit/5
+        // POST: Tags/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Body,Summary,RepoLink,CreatedAt,TagIds")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Tag tag)
         {
-            if (id != project.Id)
+            if (id != tag.Id)
             {
                 return NotFound();
             }
@@ -100,13 +97,12 @@ namespace PortfolioWeb.Controllers
             {
                 try
                 {
-                    project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
-                    _context.Update(project);
+                    _context.Update(tag);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!TagExists(tag.Id))
                     {
                         return NotFound();
                     }
@@ -117,11 +113,10 @@ namespace PortfolioWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
-            return View(project);
+            return View(tag);
         }
 
-        // GET: Projects/Delete/5
+        // GET: Tags/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,34 +124,34 @@ namespace PortfolioWeb.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
+            var tag = await _context.Tag
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(tag);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Tags/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Project.FindAsync(id);
-            if (project != null)
+            var tag = await _context.Tag.FindAsync(id);
+            if (tag != null)
             {
-                _context.Project.Remove(project);
+                _context.Tag.Remove(tag);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private bool TagExists(int id)
         {
-            return _context.Project.Any(e => e.Id == id);
+            return _context.Tag.Any(e => e.Id == id);
         }
     }
 }

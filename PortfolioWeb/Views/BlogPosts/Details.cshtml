@@ -14,7 +14,7 @@
     .details-container {
         background-color: #f0f0f0;
         border-radius: 10px;
-        padding: 20px; 
+        padding: 20px;
         margin-bottom: 20px;
         text-align: left;
     }
@@ -33,39 +33,53 @@
 
     .details-section {
         display: flex;
-        text-align: center;
+        justify-content: space-between;
+        text-align: left;
         margin-bottom: 20px;
     }
 
     .date-section,
-    .project-section {
+    .tag-section {
         text-align: left;
     }
 
-    .project-section {
+    .tag-section {
         margin-left: auto;
     }
 
     .separator {
         height: 1px;
         background-color: #d0d0d0;
-        margin-bottom: 20px; 
+        margin-bottom: 20px;
+    }
+
+    .tag-bubble {
+        background-color: #007bff;
+        color: #fff;
+        padding: 5px 10px;
+        margin: 5px;
+        border-radius: 5px;
+        display: inline-block;
     }
 </style>
 
-<div class="title">
-    <h1>@Model.Name</h1>
-</div>
+<h1>Details</h1>
 
 <div class="details-container">
     <div class="details-section">
         <div class="date-section">
             <p><strong>Date Published:</strong> @Model.CreatedAt.ToShortDateString()</p>
         </div>
-        <div class="project-section">
-            @if (Model.Project != null)
+        <div class="tag-section">
+            @if (Model.Tags.Count > 0)
             {
-                <p><strong>Project:</strong> <a href="@Url.Action("Details", "Projects", new { id = Model.Project.Id })">@Model.Project.Name</a></p>
+                <p>
+                    <strong>Tags:</strong>
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <span class="tag-bubble">@tag.Name</span>
+                    }
+                </p>
             }
         </div>
     </div>
