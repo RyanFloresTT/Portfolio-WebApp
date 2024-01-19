@@ -59,3 +59,4 @@ ExportedObj/
 sysinfo.txt
 PortfolioWeb/bin
 PortfolioWeb/obj
+*.suo
