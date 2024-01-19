@@ -5,6 +5,20 @@
 }
 
 <h1>Index</h1>
+<style>
+    .tag-bubble {
+        background-color: #007bff;
+        color: #fff;
+        padding: 5px 10px;
+        margin: 5px;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    .tag-section {
+        margin-left: auto;
+    }
+</style>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -16,27 +30,37 @@
                 <div class="text-center mb-5">
                     <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Projects</span></h1>
                 </div>
-                    <div class="row gx-5 justify-content-center">
-                        <div class="col-lg-11 col-xl-9 col-xxl-8">
-                            @foreach (var project in Model)  {
-                                <!-- Clickable Project Card -->
-                                <a href="@Url.Action("Details", "Projects", new { id = project.Id })" class="card-link">
-                                    <div class="card overflow-hidden shadow rounded-4 border-0 mb-5">
-                                        <div class="card-body p-0">
-                                            <div class="d-flex align-items-center">
-                                                <div class="p-5">
-                                                    <h2 class="fw-bolder">@project.Name</h2>
-                                                    <p>@project.Summary</p>
-                                                    <p>@project.BlogPosts.Count Blog Posts Associated with this project.</p>
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-11 col-xl-9 col-xxl-8">
+                        @foreach (var project in Model)
+                        {
+                            <!-- Clickable Project Card -->
+                            <a href="@Url.Action("Details", "Projects", new { id = project.Id })" class="card-link">
+                                <div class="card overflow-hidden shadow rounded-4 border-0 mb-5">
+                                    <div class="card-body p-0">
+                                        <div class="d-flex align-items-center">
+                                            <div class="p-5">
+                                                <h2 class="fw-bolder">@project.Name</h2>
+                                                <p>@project.Summary</p>
+                                                <p>@project.BlogPosts.Count Blog Posts Associated with this project.</p>
+
+                                                <!-- Bubble Tags Section -->
+                                                <div class="tags-section">
+                                                    <strong>Tags:</strong>
+                                                    @foreach (var tag in project.Tags)
+                                                    {
+                                                        <span class="tag-bubble">@tag.Name</span>
+                                                    }
                                                 </div>
-                                                <img class="img-fluid" src="https://dummyimage.com/300x400/343a40/6c757d" alt="..." />
                                             </div>
+                                            <img class="img-fluid" src="https://dummyimage.com/300x400/343a40/6c757d" alt="..." />
                                         </div>
                                     </div>
-                                </a>
-                            }
-                        </div>
+                                </div>
+                            </a>
+                        }
                     </div>
+                </div>
             </div>
         </section>
         <section class="py-5 bg-gradient-primary-to-secondary text-white">

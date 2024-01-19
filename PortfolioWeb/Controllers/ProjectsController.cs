@@ -36,15 +36,22 @@ namespace PortfolioWeb.Controllers
             }
 
             var project = await _context.Project
-                .Include(b => b.Tags)   
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id); 
+            
+            foreach (var tag in project.Tags)
+            {
+                Console.WriteLine($"Tag Name: {tag.Name}");
+            }
+
             if (project == null)
             {
                 return NotFound();
             }
-
+            project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
         }
+
 
         // GET: Projects/Create
         public IActionResult Create()
@@ -123,9 +130,11 @@ namespace PortfolioWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
         }
+
 
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
