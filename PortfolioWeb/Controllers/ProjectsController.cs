@@ -18,7 +18,13 @@ namespace PortfolioWeb.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.Include(p => p.BlogPosts).ToListAsync());
+            var projects = await _context.Project.Include(b => b.BlogPosts).ToListAsync();
+            foreach (var project in projects)
+            {
+                project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
+            }
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
+            return View(projects);
         }
 
         // GET: Projects/Details/5
