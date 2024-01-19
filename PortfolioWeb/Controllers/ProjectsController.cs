@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PortfolioWeb.Data;
@@ -22,7 +18,13 @@ namespace PortfolioWeb.Controllers
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.Include(p => p.BlogPosts).ToListAsync());
+            var projects = await _context.Project.Include(b => b.BlogPosts).ToListAsync();
+            foreach (var project in projects)
+            {
+                project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
+            }
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
+            return View(projects);
         }
 
         // GET: Projects/Details/5
@@ -34,18 +36,27 @@ namespace PortfolioWeb.Controllers
             }
 
             var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id); 
+            
+            foreach (var tag in project.Tags)
+            {
+                Console.WriteLine($"Tag Name: {tag.Name}");
+            }
+
             if (project == null)
             {
                 return NotFound();
             }
-
+            project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
         }
+
 
         // GET: Projects/Create
         public IActionResult Create()
         {
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View();
         }
 
@@ -54,14 +65,18 @@ namespace PortfolioWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Body,Summary,RepoLink,CreatedAt,Tags")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Name,Body,Summary,RepoLink,CreatedAt,TagIds")] Project project)
         {
             if (ModelState.IsValid)
             {
+                var selectedTags = await _context.Tag.Where(tag => project.TagIds.Contains(tag.Id)).ToListAsync();
+                project.TagIds = selectedTags.Select(tag => tag.Id).ToList();
+                project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
         }
 
@@ -78,6 +93,7 @@ namespace PortfolioWeb.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
         }
 
@@ -86,7 +102,7 @@ namespace PortfolioWeb.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Body,Summary,RepoLink,CreatedAt,Tags")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Body,Summary,RepoLink,CreatedAt,TagIds")] Project project)
         {
             if (id != project.Id)
             {
@@ -97,6 +113,7 @@ namespace PortfolioWeb.Controllers
             {
                 try
                 {
+                    project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
                     _context.Update(project);
                     await _context.SaveChangesAsync();
                 }
@@ -113,8 +130,11 @@ namespace PortfolioWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
         }
+
 
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)

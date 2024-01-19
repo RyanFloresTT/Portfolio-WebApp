@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortfolioWeb.Data;
 
@@ -11,9 +12,11 @@ using PortfolioWeb.Data;
 namespace PortfolioWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240118061853_UpdateTagModel")]
+    partial class UpdateTagModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,21 +127,11 @@ namespace PortfolioWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BlogPostId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("BlogPostId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Tag");
                 });
@@ -152,27 +145,9 @@ namespace PortfolioWeb.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("PortfolioWeb.Models.Tag", b =>
-                {
-                    b.HasOne("PortfolioWeb.Models.BlogPost", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("BlogPostId");
-
-                    b.HasOne("PortfolioWeb.Models.Project", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("ProjectId");
-                });
-
-            modelBuilder.Entity("PortfolioWeb.Models.BlogPost", b =>
-                {
-                    b.Navigation("Tags");
-                });
-
             modelBuilder.Entity("PortfolioWeb.Models.Project", b =>
                 {
                     b.Navigation("BlogPosts");
-
-                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }
