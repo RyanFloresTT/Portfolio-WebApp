@@ -10,6 +10,7 @@ namespace PortfolioWeb.Models
         public string Body { get; set; }
         [Required]
         public string Summary { get; set; }
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Foreign key to Project (nullable)
@@ -17,7 +18,8 @@ namespace PortfolioWeb.Models
         public Project? Project { get; set; }
 
         // Tags for filtering
-        public List<string>? Tags { get; set; } = new List<string>();
+        public List<int>? TagIds { get; set; } = new();
+        public List<Tag>? Tags { get; set; } = new();
     }
 
 }

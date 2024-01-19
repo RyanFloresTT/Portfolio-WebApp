@@ -6,6 +6,20 @@
 
 <h1>Index</h1>
 
+<style>
+    .tag-bubble {
+        background-color: #007bff;
+        color: #fff;
+        padding: 5px 10px;
+        margin: 5px;
+        border-radius: 5px;
+        display: inline-block;
+    }
+
+    .tag-section {
+        margin-left: auto;
+    }
+</style>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -32,6 +46,19 @@
                                                 {
                                                     <p>Associated Project: <a href="@Url.Action("Details", "Projects", new { id = blogPost.Project.Id })">@blogPost.Project.Name</a></p>
                                                 }
+                                                <div class="tags-section">
+                                                    @if (blogPost.TagIds.Count > 0)
+                                                    {
+                                                        <p>
+                                                            <strong>Tags:</strong>
+                                                            @foreach (var tag in blogPost.Tags)
+                                                            {
+                                                                Console.WriteLine(tag);
+                                                                <span class="tag-bubble">@tag.Name</span>
+                                                            }
+                                                        </p>
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
