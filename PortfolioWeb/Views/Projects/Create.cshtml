@@ -4,26 +4,93 @@
     ViewData["Title"] = "Create";
 }
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+
+    h4 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .btn-save {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-back {
+        text-decoration: none;
+        color: #007bff;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+</style>
+
 <h1>Create</h1>
 
 <h4>Project</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" class="form-container">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name">Title *</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Body" class="control-label"></label>
+                <label asp-for="Body">Body *</label>
                 <input asp-for="Body" class="form-control" />
                 <span asp-validation-for="Body" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Summary" class="control-label"></label>
+                <label asp-for="Summary">Summary *</label>
                 <input asp-for="Summary" class="form-control" />
                 <span asp-validation-for="Summary" class="text-danger"></span>
             </div>
@@ -33,23 +100,23 @@
                 <span asp-validation-for="RepoLink" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
+                <label asp-for="CreatedAt">Publish Date *</label>
                 <input asp-for="CreatedAt" class="form-control" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Tags" class="control-label"></label>
+                <label asp-for="Tags"></label>
                 <input asp-for="Tags" class="form-control" />
                 <span asp-validation-for="Tags" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn-save" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn-back">Back to List</a>
 </div>
-
