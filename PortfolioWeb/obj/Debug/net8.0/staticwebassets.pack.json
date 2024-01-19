@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\PortfolioWeb.bundle.scp.css"
     },
     {
+      "Id": "E:\\vsprac\\Portfolio\\PortfolioWeb\\wwwroot\\assets\\Resume\\Ryan Flores - Software Developer.docx.pdf",
+      "PackagePath": "staticwebassets\\assets\\Resume\\Ryan Flores - Software Developer.docx.pdf"
+    },
+    {
       "Id": "E:\\vsprac\\Portfolio\\PortfolioWeb\\wwwroot\\assets\\pfp-removebg-preview.png",
       "PackagePath": "staticwebassets\\assets\\pfp-removebg-preview.png"
     },

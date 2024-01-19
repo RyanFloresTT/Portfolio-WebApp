@@ -28,6 +28,10 @@
                                             <div class="p-5">
                                                 <h2 class="fw-bolder">@blogPost.Name</h2>
                                                 <p>@blogPost.Summary</p>
+                                                @if (blogPost.Project != null)
+                                                {
+                                                    <p>Associated Project: <a href="@Url.Action("Details", "Projects", new { id = blogPost.Project.Id })">@blogPost.Project.Name</a></p>
+                                                }
                                             </div>
                                         </div>
                                     </div>

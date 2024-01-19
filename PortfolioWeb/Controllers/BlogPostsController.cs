@@ -22,8 +22,8 @@ namespace PortfolioWeb.Controllers
         // GET: BlogPosts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.BlogPost.Include(b => b.Project);
-            return View(await applicationDbContext.ToListAsync());
+            var blogPosts = await _context.BlogPost.Include(b => b.Project).ToListAsync();
+            return View(blogPosts);
         }
 
         // GET: BlogPosts/Details/5
@@ -49,6 +49,7 @@ namespace PortfolioWeb.Controllers
         public IActionResult Create()
         {
             ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Id");
+            ViewBag.Projects = new SelectList(_context.Project, "Id", "Name");
             return View();
         }
 
@@ -65,6 +66,7 @@ namespace PortfolioWeb.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Projects = new SelectList(_context.Project, "Id", "Name");
             ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Id", blogPost.ProjectId);
             return View(blogPost);
         }
@@ -77,12 +79,13 @@ namespace PortfolioWeb.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPost.FindAsync(id);
+            var blogPost = await _context.BlogPost.FindAsync(id); 
             if (blogPost == null)
             {
                 return NotFound();
             }
-            ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Id", blogPost.ProjectId);
+            ViewBag.Projects = new SelectList(_context.Project, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Name", blogPost.ProjectId);
             return View(blogPost);
         }
 
@@ -118,6 +121,7 @@ namespace PortfolioWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Projects = new SelectList(_context.Project, "Id", "Name");
             ViewData["ProjectId"] = new SelectList(_context.Set<Project>(), "Id", "Id", blogPost.ProjectId);
             return View(blogPost);
         }
