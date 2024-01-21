@@ -31,6 +31,11 @@
         margin-bottom: 10px;
     }
 
+    .associated-project-section {
+        text-align: left;
+    }
+
+
     .details-section {
         display: flex;
         justify-content: space-between;
@@ -38,9 +43,12 @@
         margin-bottom: 20px;
     }
 
-    .date-section,
-    .tag-section {
+    .left-section {
         text-align: left;
+    }
+
+    .right-section {
+        text-align: right;
     }
 
     .tag-section {
@@ -63,14 +71,19 @@
     }
 </style>
 
-<h1>Details</h1>
+<h1>@Model.Name</h1>
 
 <div class="details-container">
     <div class="details-section">
-        <div class="date-section">
-            <p><strong>Date Published:</strong> @Model.CreatedAt.ToShortDateString()</p>
+        <div class="left-section">
+            <div class="date-section">
+                <p><strong>Date Published: </strong> @Model.CreatedAt.ToShortDateString()</p>
+            </div>
+            <div class="associated-project-section">
+                <p><strong>Associated Project: </strong>@Html.ActionLink(Model.Project.Name, "Details", "Projects", new { id = Model.Project.Id })</p>
+            </div>
         </div>
-        <div class="tag-section">
+        <div class="right-section">
             @if (Model.Tags.Count > 0)
             {
                 <p>
@@ -83,7 +96,6 @@
             }
         </div>
     </div>
-
     <div class="separator"></div>
     <div>
         <p>@Model.Body</p>

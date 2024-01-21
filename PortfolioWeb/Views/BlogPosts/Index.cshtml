@@ -3,10 +3,11 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
 <style>
+    .tag-checkbox {
+        margin-right: 10px;
+    }
+
     .tag-bubble {
         background-color: #007bff;
         color: #fff;
@@ -20,9 +21,6 @@
         margin-left: auto;
     }
 </style>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <div class="d-flex flex-column h-100 bg-light">
     <main class="flex-shrink-0">
         <!-- Blog Section-->
@@ -31,10 +29,30 @@
                 <div class="text-center mb-5">
                     <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Blog Posts</span></h1>
                 </div>
+                <form asp-controller="BlogPosts" asp-action="FilterByTags" method="post">
+                    <div class="tag-section">
+                        <strong>Filter by Tags:</strong>
+                        @foreach (var tag in ViewBag.AllTags)
+                        {
+                            <label class="tag-bubble">
+                                <input type="checkbox" name="tagNames" value="@tag.Name" class="tag-checkbox" />
+                                @tag.Name
+                            </label>
+                        }
+                    </div>
+
+                    <p>
+                        <a asp-action="Create">Create New</a>
+                    </p>
+
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a asp-action="Index" class="btn btn-secondary">Clear Filters</a>
+                </form>
                 <div class="row gx-5 justify-content-center">
                     <div class="col-lg-11 col-xl-9 col-xxl-8">
-                        @foreach (var blogPost in Model) {
-                            <!-- Clickable Project Card -->
+                        @foreach (var blogPost in Model)
+                        {
+                            <!-- Clickable Blog Post Card -->
                             <a href="@Url.Action("Details", "BlogPosts", new { id = blogPost.Id })" class="card-link">
                                 <div class="card overflow-hidden shadow rounded-4 border-0 mb-5">
                                     <div class="card-body p-0">
@@ -47,13 +65,12 @@
                                                     <p>Associated Project: <a href="@Url.Action("Details", "Projects", new { id = blogPost.Project.Id })">@blogPost.Project.Name</a></p>
                                                 }
                                                 <div class="tags-section">
-                                                    @if (blogPost.TagIds.Count > 0)
+                                                    @if (blogPost.Tags.Count > 0)
                                                     {
                                                         <p>
                                                             <strong>Tags:</strong>
                                                             @foreach (var tag in blogPost.Tags)
                                                             {
-                                                                Console.WriteLine(tag);
                                                                 <span class="tag-bubble">@tag.Name</span>
                                                             }
                                                         </p>
@@ -78,4 +95,4 @@
             </div>
         </section>
     </main>
-</div>
+    </div>

@@ -31,6 +31,17 @@
         margin-bottom: 10px;
     }
 
+    .horizontal-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+    }
+
+    .blog-post-link {
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
     .details-section {
         display: flex;
         text-align: center;
@@ -62,12 +73,12 @@
     }
 </style>
 
-<h1>Details</h1>
+<h1>@Model.Name</h1>
 
 <div class="details-container">
     <div class="details-section">
         <div class="date-section">
-            <p><strong>Date Created:</strong> @Model.CreatedAt.ToShortDateString()</p>
+            <p><strong>Date Created:</strong> @Model.CreatedAt.ToShortDateString()
         </div>
         <div class="tag-section">
             @if (Model.TagIds.Count > 0)
@@ -86,6 +97,18 @@
     <div class="separator"></div>
     <div>
         <p>@Model.Body</p>
+    </div>
+    <div class="separator"></div>
+    <div>
+        <h2>Associated Blog Posts:</h2>
+        <ol class="horizontal-list">
+            @foreach (var blogPost in Model.BlogPosts.OrderBy(bp => bp.CreatedAt))
+            {
+                <li class="blog-post-link">
+                    @Html.ActionLink(blogPost.Name, "Details", "BlogPosts", new { id = blogPost.Id })
+                </li>
+            }
+        </ol>
     </div>
 </div>
 

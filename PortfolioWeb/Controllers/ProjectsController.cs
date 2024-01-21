@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PortfolioWeb.Data;
 using PortfolioWeb.Models;
+using System.Linq;
 
 namespace PortfolioWeb.Controllers
 {
@@ -23,6 +24,7 @@ namespace PortfolioWeb.Controllers
             {
                 project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
             }
+            ViewBag.AllTags = _context.Tag.ToList();
             ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(projects);
         }
@@ -47,6 +49,9 @@ namespace PortfolioWeb.Controllers
             {
                 return NotFound();
             }
+            project = await _context.Project
+                .Include(p => p.BlogPosts)
+                .FirstOrDefaultAsync(m => m.Id == id);
             project.Tags = await _context.Tag.Where(t => project.TagIds.Contains(t.Id)).ToListAsync();
             ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(project);
@@ -172,6 +177,17 @@ namespace PortfolioWeb.Controllers
         private bool ProjectExists(int id)
         {
             return _context.Project.Any(e => e.Id == id);
+        }
+        public IActionResult FilterByTags(List<string> tagNames)
+        {
+            var filteredProjects = _context.Project
+                .Include(bp => bp.BlogPosts)
+                .Include(bp => bp.Tags)
+                .Where(bp => tagNames.All(tag => bp.Tags.Any(t => t.Name == tag)))
+                .ToList();
+
+            ViewBag.AllTags = _context.Tag.ToList();
+            return View("Index", filteredProjects);
         }
     }
 }

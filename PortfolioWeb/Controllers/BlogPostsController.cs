@@ -20,6 +20,7 @@ namespace PortfolioWeb.Controllers
             {
                 blogPost.Tags = await _context.Tag.Where(t => blogPost.TagIds.Contains(t.Id)).ToListAsync();
             }
+            ViewBag.AllTags = _context.Tag.ToList();
             ViewBag.Tags = new SelectList(_context.Tag, "Id", "Name");
             return View(blogPosts);
         }
@@ -148,5 +149,18 @@ namespace PortfolioWeb.Controllers
         private bool BlogPostExists(int id) {
             return _context.BlogPost.Any(e => e.Id == id);
         }
+
+        public IActionResult FilterByTags(List<string> tagNames) {
+            var filteredPosts = _context.BlogPost
+                .Include(bp => bp.Project)
+                .Include(bp => bp.Tags)
+                .Where(bp => tagNames.All(tag => bp.Tags.Any(t => t.Name == tag)))
+                .ToList();
+
+            ViewBag.AllTags = _context.Tag.ToList();
+            return View("Index", filteredPosts);
+        }
+
+
     }
 }

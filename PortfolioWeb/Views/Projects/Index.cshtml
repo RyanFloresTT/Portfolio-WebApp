@@ -3,9 +3,11 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
 <style>
+    .tag-checkbox {
+        margin-right: 10px;
+    }
+
     .tag-bubble {
         background-color: #007bff;
         color: #fff;
@@ -19,9 +21,6 @@
         margin-left: auto;
     }
 </style>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <div class="d-flex flex-column h-100 bg-light">
     <main class="flex-shrink-0">
         <!-- Projects Section-->
@@ -30,6 +29,23 @@
                 <div class="text-center mb-5">
                     <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Projects</span></h1>
                 </div>
+                <form asp-controller="Projects" asp-action="FilterByTags" method="post">
+                    <div class="tag-section">
+                        <strong>Filter by Tags:</strong>
+                        @foreach (var tag in ViewBag.AllTags)
+                        {
+                            <label class="tag-bubble">
+                                <input type="checkbox" name="tagNames" value="@tag.Name" class="tag-checkbox" />
+                                @tag.Name
+                            </label>
+                        }
+                    </div>
+                    <p>
+                        <a asp-action="Create">Create New</a>
+                    </p>
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                    <a asp-action="Index" class="btn btn-secondary">Clear Filters</a>
+                </form>
                 <div class="row gx-5 justify-content-center">
                     <div class="col-lg-11 col-xl-9 col-xxl-8">
                         @foreach (var project in Model)
