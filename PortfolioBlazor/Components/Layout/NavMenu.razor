@@ -1,30 +1,16 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">PortfolioBlazor</a>
-    </div>
-</div>
+﻿<MudPaper Width="250px" Elevation="0" Class="py-3" Style="@($"background:{Theme.Palette.PrimaryLighten}; color: #F5E276;")">
+    <MudNavMenu Color="Color.Warning">
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+        <MudNavLink Href="/blog" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Feed">Blog</MudNavLink>
+        <MudNavLink Href="/projects" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Architecture">Projects</MudNavLink>
+        <MudNavLink Href="/resume" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Star">Resume</MudNavLink>
+        <MudNavLink Href="/about" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Face">About</MudNavLink>
+        </MudNavMenu>
+</MudPaper>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    private MudTheme Theme = new MudTheme();
+}
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
+<!-- Text hex : #F5E276 -->

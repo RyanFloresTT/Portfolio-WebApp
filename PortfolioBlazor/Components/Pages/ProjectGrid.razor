@@ -1,0 +1,51 @@
+﻿@page "/projects"
+@rendermode InteractiveServer
+@using PortfolioBlazor.Components.MudTest
+
+<PageTitle>Mud Test</PageTitle>
+
+<MudPaper Class="pa-4">
+    <MudStack Spacing="2">
+        <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Hide" : "Show Filters")</MudButton>
+        <MudDivider />
+        <MudCollapse Expanded="_expanded">
+            <MudChipSet MultiSelection="true" Class="d-flex justify-center flex-grow-1 gap-4">
+                <MudChip Text="purple" Variant="Variant.Text" Color="Color.Primary">Primary</MudChip>
+                <MudChip Text="pink" Variant="Variant.Text" Color="Color.Secondary">Secondary</MudChip>
+                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Info</MudChip>
+                <MudChip Text="green" Variant="Variant.Text" Color="Color.Success">Success</MudChip>
+                <MudChip Text="orange" Variant="Variant.Text" Color="Color.Warning">Warning</MudChip>
+                <MudChip Text="red" Variant="Variant.Text" Color="Color.Error">Error</MudChip>
+                <MudChip Text="black" Variant="Variant.Text" Color="Color.Dark">Dark</MudChip>
+            </MudChipSet>
+        </MudCollapse>
+    </MudStack>
+</MudPaper>
+
+
+<MudGrid>
+    @for (int i = 0; i < 5; i++)
+    {
+        @if (i == 0)
+        {
+            <MudItem xs="12">
+                <BlogPostCard></BlogPostCard>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="6">
+                <BlogPostCard></BlogPostCard>
+            </MudItem>
+        }
+    }
+</MudGrid>
+
+@code {
+    bool _expanded = false;
+
+    private void OnExpandCollapseClick()
+    {
+        _expanded = !_expanded;
+    }
+}
