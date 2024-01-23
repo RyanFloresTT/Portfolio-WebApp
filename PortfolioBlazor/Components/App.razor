@@ -13,7 +13,7 @@
     <HeadOutlet />
 </head>
 
-<body Style="@($"background:{Theme.Palette.Primary};")">
+<body Style="@($"background:{MyCustomTheme.Palette.Primary};")">
     <Routes @rendermode=RenderMode.InteractiveServer />
     <script src="_framework/blazor.web.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
@@ -22,5 +22,14 @@
 </html>
 
 @code {
-    private MudTheme Theme = new MudTheme();
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Palette = new PaletteLight()
+            {
+                Primary = new MudColor("#2F243A"),
+                Secondary = new MudColor("#444054"),
+                Tertiary = new MudColor("#9984D4"),
+                TextPrimary = new MudColor("#EEF4D4")
+            }
+        };
 }

@@ -1,16 +1,55 @@
-﻿<MudPaper Width="250px" Elevation="0" Class="py-3" Style="@($"background:{Theme.Palette.PrimaryLighten}; color: #F5E276;")">
-    <MudNavMenu Color="Color.Warning">
-        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-        <MudNavLink Href="/blog" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Feed">Blog</MudNavLink>
-        <MudNavLink Href="/projects" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Architecture">Projects</MudNavLink>
-        <MudNavLink Href="/resume" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Star">Resume</MudNavLink>
-        <MudNavLink Href="/about" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Face">About</MudNavLink>
-        </MudNavMenu>
+﻿<MudPaper Width="250px" Elevation="0" Class="py-3" Style="@($"background:{MyCustomTheme.Palette.Primary}; color: {MyCustomTheme.Palette.TextPrimary}; overflow: hidden;")">
+    <MudNavMenu Color="Color.Tertiary">
+        <div style="border: 1px solid @MyCustomTheme.Palette.Tertiary; border-radius: 16px; overflow: hidden;">
+            <MudCard Style="@($"background:{MyCustomTheme.Palette.Secondary}; color: {MyCustomTheme.Palette.TextPrimary};")">
+                <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home" Class="d-flex align-center justify-center">
+                    <MudCardContent>
+                        <h1>Home</h1>
+                    </MudCardContent>
+                </MudNavLink>
+            </MudCard>
+            <MudCard Style="@($"background:{MyCustomTheme.Palette.Secondary}; color:{MyCustomTheme.Palette.TextPrimary};")">
+                <MudNavLink Href="/blog" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Feed">
+                    <MudCardContent>
+                        <h1>Blog</h1>
+                    </MudCardContent>
+                </MudNavLink>
+            </MudCard>
+            <MudCard Style="@($"background:{MyCustomTheme.Palette.Secondary}; color:{MyCustomTheme.Palette.TextPrimary};")">
+                <MudNavLink Href="/projects" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Architecture">
+                    <MudCardContent>
+                        <h1>Projects</h1>
+                    </MudCardContent>
+                </MudNavLink>
+            </MudCard>
+            <MudCard Style="@($"background:{MyCustomTheme.Palette.Secondary}; color:{MyCustomTheme.Palette.TextPrimary};")">
+                <MudNavLink Href="/resume" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Star">
+                    <MudCardContent>
+                        <h1>Resume</h1>
+                    </MudCardContent>
+                </MudNavLink>
+            </MudCard>
+            <MudCard Style="@($"background:{MyCustomTheme.Palette.Secondary}; color:{MyCustomTheme.Palette.TextPrimary};")">
+                <MudNavLink Href="/about" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Face">
+                    <MudCardContent>
+                        <h1>About</h1>
+                    </MudCardContent>
+                </MudNavLink>
+            </MudCard>
+        </div>
+    </MudNavMenu>
 </MudPaper>
 
 @code {
-    private MudTheme Theme = new MudTheme();
+    MudColor tert = new("#9984D4");
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Palette = new PaletteLight()
+            {
+                Primary = new MudColor("#2F243A"),
+                Secondary = new MudColor("#444054"),
+                Tertiary = new MudColor("#9984D4"),
+                TextPrimary = new MudColor("#EEF4D4")
+            }
+        };
 }
-
-
-<!-- Text hex : #F5E276 -->

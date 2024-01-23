@@ -1,24 +1,50 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider />
+@using PortfolioBlazor.Components.MyComponents
 
+<MudThemeProvider Theme="MyCustomTheme" />
 <MudLayout>
-    <MudAppBar Elevation="1" Style="@($"background:{Theme.Palette.PrimaryDarken};")">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">TrustyTea.me</MudText></MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Style="@($"background:{Theme.Palette.PrimaryLighten};")">
+    <MudAppBar Elevation="0" Style="@($"background:{MyCustomTheme.Palette.Primary};")">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleLeftDrawer())" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => ToggleRightDrawer())" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="_leftDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" Style="@($"background:{MyCustomTheme.Palette.Primary};")" Width="100%">
         <NavMenu />
     </MudDrawer>
+    <MudDrawer Variant="@DrawerVariant.Temporary" Anchor="Anchor.End" @bind-Open="_rightDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Style="@($"background:{MyCustomTheme.Palette.Primary};")" Width="100%">
+        <SocialMediaDrawerContent />
+    </MudDrawer>
     <MudMainContent>
-        @Body
+        <CascadingValue Value="@MyCustomTheme">
+            <div class="body-container">
+                @Body
+            </div>
+        </CascadingValue>
     </MudMainContent>
 </MudLayout>
 
 @code {
-        bool _drawerOpen = true;
-    private MudTheme Theme = new MudTheme();
+    bool _leftDrawerOpen = false;
+    bool _rightDrawerOpen = false;
+    private bool _isDarkMode;
 
-    void DrawerToggle()
+    void ToggleLeftDrawer()
     {
-        _drawerOpen = !_drawerOpen;
+        _leftDrawerOpen = !_leftDrawerOpen;
     }
+
+    void ToggleRightDrawer()
+    {
+        _rightDrawerOpen = !_rightDrawerOpen;
+    }
+    MudTheme MyCustomTheme = new MudTheme()
+        {
+            Palette = new PaletteLight()
+            {
+                Primary = new MudColor("#2F243A"),
+                Secondary = new MudColor("#444054"),
+                Tertiary = new MudColor("#9984D4"),
+                TextPrimary = new MudColor("#EEF4D4")
+            }
+        };
 }
