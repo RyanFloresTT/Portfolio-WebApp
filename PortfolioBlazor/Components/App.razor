@@ -26,10 +26,28 @@
         {
             Palette = new PaletteLight()
             {
-                Primary = new MudColor("#2F243A"),
-                Secondary = new MudColor("#444054"),
-                Tertiary = new MudColor("#9984D4"),
-                TextPrimary = new MudColor("#EEF4D4")
-            }
+                Black = "#545863",
+                Primary = "#00E8FC",
+                Secondary = "#F96E46",
+                Tertiary = "#F9C846",
+                Info = "#FFE3E3",
+                ActionDefault = "#546EFC",
+                PrimaryContrastText = "#ffffff",
+                SecondaryContrastText = "#ffffff",
+            },
+            Typography = new Typography()
+            {
+                Default = new Default()
+                {
+                    FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
+                },
+                H6 = new H6()
+                {
+                    FontSize = "1.25rem",
+                    FontWeight = 500,
+                    LineHeight = 1.6,
+                    LetterSpacing = "0.0075em",
+                },
+            },
         };
 }
