@@ -1,60 +1,12 @@
 ﻿@page "/"
 <PageTitle>Home</PageTitle>
 
-<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
-    <MudGrid>
-        <MudItem xs="12" sm="12">
-            <MudCarousel Elevation="2" Class="mud-width-full pa-4" Style="height:300px  ;" ShowArrows="true" ShowBullets="false" EnableSwipeGesture="true" AutoCycle="true" TData="object">
-                <MudCarouselItem Transition="Transition.Fade" Style="@($"background:{Theme.Palette.Tertiary};")">
-                    <div class="d-flex flex-column align-center justify-center" style="height:100%">
-                        <div class="text-center">
-                            <h2>Project 1</h2>
-                        </div>
-                        <div class="text-center mt-2">
-                            <p>Summary for Project 1</p>
-                        </div>
-                    </div>
-                </MudCarouselItem>
-                <MudCarouselItem Transition="Transition.Fade" Style="@($"background:{Theme.Palette.TertiaryLighten};")">
-                    <MudLink Href="https://github.com/RyanFloresTT" target="_blank" Underline="Underline.None">
-                        <div class="d-flex flex-column align-center justify-center" style="height:100%">
-                            <div class="text-center">
-                                <h2>Project 2</h2>
-                            </div>
-                            <div class="text-center mt-2">
-                                <p>Summary for Project 2</p>
-                            </div>
-                        </div>
-                    </MudLink>
-                </MudCarouselItem>
-                <MudCarouselItem Transition="Transition.Fade" Style="@($"background:{Theme.Palette.TertiaryDarken};")">
-                    <div class="d-flex flex-column align-center justify-center" style="height:100%">
-                        <div class="text-center">
-                            <h2>Project 3</h2>
-                        </div>
-                        <div class="text-center mt-2">
-                            <p>Summary for Project 3</p>
-                        </div>
-                    </div>
-                </MudCarouselItem>
-            </MudCarousel>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudLink Href="/blog" Underline="Underline.None">
-                <MudPaper Elevation="2" Class="mud-secondary pa-4 d-flex align-center justify-center" Style="height: 200px;">
-                    <h1>Latest Blog Post</h1>
-                </MudPaper>
-            </MudLink>
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudLink Href="/projects" Underline="Underline.None">
-                <MudPaper Elevation="2" Class="mud-tertiary pa-4 d-flex align-center justify-center" Style="height: 200px;">
-                    <h1>Currently Working On...</h1>
-                </MudPaper>
-            </MudLink>
-        </MudItem>
-    </MudGrid>
+<MudContainer Class="mt-16">
+    <MudText Class="mt-16" Color="Color.Warning" Typo="Typo.h1" Align="Align.Center">Ryan Flores</MudText>
+    <MudText Color="Color.Warning" Typo="Typo.body1" Align="Align.Center">Software Engineer | Game Developer</MudText>
+    <MudText Class="mt-16" Color="Color.Warning" Typo="Typo.h5" Align="Align.Center">Games are Art, Coding is My Palette – Let's Paint a Masterpiece.</MudText>
 </MudContainer>
+
 
 @code {
     [CascadingParameter]

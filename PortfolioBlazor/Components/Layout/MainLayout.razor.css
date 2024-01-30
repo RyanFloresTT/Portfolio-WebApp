@@ -4,11 +4,6 @@
     flex-direction: column;
 }
 
-.body-container {
-    background: linear-gradient(to right, #e6e9f0 0%, #eef1f5 100%);
-}
-
-
 main {
     flex: 1;
 }

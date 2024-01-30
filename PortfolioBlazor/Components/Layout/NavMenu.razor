@@ -1,44 +1,20 @@
 ﻿@inject NavigationManager NavManager
-
-<MudNavMenu Dense="true" Class="my-nav-menu">
-    <MudTabs>
+<MudTabs Color="@Color.Primary">
         <MudTabPanel Text="Home" OnClick="@(() => NavManager.NavigateTo("/"))" />
         <MudTabPanel Text="Blog" OnClick="@(() => NavManager.NavigateTo("/blog"))" />
         <MudTabPanel Text="Projects" OnClick="@(() => NavManager.NavigateTo("/projects"))" />
         <MudTabPanel Text="Resume" OnClick="@(() => NavManager.NavigateTo("/resume"))" />
         <MudTabPanel Text="About" OnClick="@(() => NavManager.NavigateTo("/about"))" />
     </MudTabs>
-</MudNavMenu>
-
-
 
 @code {
-    MudTheme MyCustomTheme = new MudTheme()
-        {
+    MudTheme MyCustomTheme = new MudTheme() {
             Palette = new PaletteLight()
             {
-                Black = "#545863",
-                Primary = "#00E8FC",
-                Secondary = "#F96E46",
-                Tertiary = "#F9C846",
-                Info = "#FFE3E3",
-                ActionDefault = "#546EFC",
-                PrimaryContrastText = "#ffffff",
-                SecondaryContrastText = "#ffffff",
+                Primary = "#352F44",
+                Secondary = "#5C5470",
+                Tertiary = "#B9B4C7",
+                Warning = "#FAF0E6"
             },
-            Typography = new Typography()
-            {
-                Default = new Default()
-                {
-                    FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
-                },
-                H6 = new H6()
-                {
-                    FontSize = "1.25rem",
-                    FontWeight = 500,
-                    LineHeight = 1.6,
-                    LetterSpacing = "0.0075em",
-                },
-            },
-        };
+    };
 }

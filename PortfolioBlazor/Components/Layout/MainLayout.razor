@@ -4,11 +4,10 @@
 <MudThemeProvider Theme="MyCustomTheme" />
 <MudLayout>
     <MudAppBar Elevation="0" Style="@($"background:{MyCustomTheme.Palette.Primary};")">
-        <MudText>Ryan Flores</MudText>
         <MudSpacer />
         <NavMenu />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => ToggleRightDrawer())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => ToggleRightDrawer())" />
     </MudAppBar>
     <MudDrawer Variant="@DrawerVariant.Temporary" Anchor="Anchor.End" @bind-Open="_rightDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Style="@($"background:{MyCustomTheme.Palette.Primary};")" Width="250px">
         <SocialMediaDrawerContent />
@@ -36,32 +35,14 @@
     {
         _rightDrawerOpen = !_rightDrawerOpen;
     }
-        MudTheme MyCustomTheme = new MudTheme()
+    MudTheme MyCustomTheme = new MudTheme()
         {
             Palette = new PaletteLight()
             {
-                Black = "#545863",
-                Primary = "#00E8FC",
-                Secondary = "#F96E46",
-                Tertiary = "#F9C846",
-                Info = "#FFE3E3",
-                ActionDefault = "#546EFC",
-                PrimaryContrastText = "#ffffff",
-                SecondaryContrastText = "#ffffff",
-            },
-            Typography = new Typography()
-            {
-                Default = new Default()
-                {
-                    FontFamily = new[] { "Roboto", "Helvetica", "Arial", "sans-serif" },
-                },
-                H6 = new H6()
-                {
-                    FontSize = "1.25rem",
-                    FontWeight = 500,
-                    LineHeight = 1.6,
-                    LetterSpacing = "0.0075em",
-                },
+                Primary = "#352F44",
+                Secondary = "#5C5470",
+                Tertiary = "#B9B4C7",
+                Warning = "#FAF0E6"
             },
         };
-    }
+}
