@@ -1,0 +1,14 @@
+﻿<MudCard Elevation="8" Class="pa-4 mx-6" Style="@($"background:{Colors.BlueGrey.Darken4};")">
+    <MudCardContent>
+        <MudText Color="Color.Warning">Story of the day</MudText>
+        <MudText Color="Color.Warning" Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Tertiary">Read</MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [CascadingParameter]
+    protected MudTheme Theme { get; set; }
+}

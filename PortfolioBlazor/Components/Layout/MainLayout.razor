@@ -7,11 +7,8 @@
         <MudSpacer />
         <NavMenu />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End" OnClick="@((e) => ToggleRightDrawer())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Inherit" Edge="Edge.End" Href="/login" />
     </MudAppBar>
-    <MudDrawer Variant="@DrawerVariant.Temporary" Anchor="Anchor.End" @bind-Open="_rightDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Style="@($"background:{MyCustomTheme.Palette.Primary};")" Width="250px">
-        <SocialMediaDrawerContent />
-    </MudDrawer>
     <MudMainContent>
         <CascadingValue Value="@MyCustomTheme">
             <div class="body-container">
@@ -22,19 +19,6 @@
 </MudLayout>
 
 @code {
-    bool _leftDrawerOpen = false;
-    bool _rightDrawerOpen = false;
-    private bool _isDarkMode;
-
-    void ToggleLeftDrawer()
-    {
-        _leftDrawerOpen = !_leftDrawerOpen;
-    }
-
-    void ToggleRightDrawer()
-    {
-        _rightDrawerOpen = !_rightDrawerOpen;
-    }
     MudTheme MyCustomTheme = new MudTheme()
         {
             Palette = new PaletteLight()

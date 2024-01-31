@@ -1,0 +1,14 @@
+﻿@page "/contact"
+@rendermode InteractiveServer
+@using PortfolioBlazor.Components.MyComponents
+
+<PageTitle>Contact Me</PageTitle>
+
+<MudText Class="mt-16" Align="Align.Center" Typo="Typo.h1" Color="Color.Warning">Contact Me</MudText>
+
+<SocialMediaGrid />
+
+@code {
+    [CascadingParameter]
+    protected MudTheme Theme { get; set; }
+}

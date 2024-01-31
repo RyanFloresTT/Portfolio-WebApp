@@ -1,0 +1,26 @@
+﻿<MudPaper Style="@($"background:{Colors.BlueGrey.Darken4};")" Class="pa-4 my-16">
+    <MudStack Spacing="2">
+        <MudButton Style="@($"color:{Theme.Palette.Warning};")" OnClick="OnExpandCollapseClick">@(_expanded ? "Hide" : "Show Filters")</MudButton>
+        <MudDivider />
+        <MudCollapse Expanded="_expanded">
+            <MudChipSet Filter="true" MultiSelection="true" Class="d-flex justify-center flex-grow-1 gap-4">
+                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">C#</MudChip>
+                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Web Development</MudChip>
+                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Game Development</MudChip>
+                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">.NET</MudChip>
+                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Discord</MudChip>
+            </MudChipSet>
+        </MudCollapse>
+    </MudStack>
+</MudPaper>
+
+@code{
+    bool _expanded = false;
+
+    private void OnExpandCollapseClick()
+    {
+        _expanded = !_expanded;
+    }
+    [CascadingParameter]
+    protected MudTheme Theme { get; set; }
+}

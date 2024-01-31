@@ -1,27 +1,12 @@
 ﻿@page "/projects"
 @rendermode InteractiveServer
-@using PortfolioBlazor.Components.MudTest
+@using PortfolioBlazor.Components.MyComponents
 
-<PageTitle>Mud Test</PageTitle>
+<PageTitle>Projects</PageTitle>
 
-<MudPaper Class="pa-4">
-    <MudStack Spacing="2">
-        <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Hide" : "Show Filters")</MudButton>
-        <MudDivider />
-        <MudCollapse Expanded="_expanded">
-            <MudChipSet MultiSelection="true" Class="d-flex justify-center flex-grow-1 gap-4">
-                <MudChip Text="purple" Variant="Variant.Text" Color="Color.Primary">Primary</MudChip>
-                <MudChip Text="pink" Variant="Variant.Text" Color="Color.Secondary">Secondary</MudChip>
-                <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Info</MudChip>
-                <MudChip Text="green" Variant="Variant.Text" Color="Color.Success">Success</MudChip>
-                <MudChip Text="orange" Variant="Variant.Text" Color="Color.Warning">Warning</MudChip>
-                <MudChip Text="red" Variant="Variant.Text" Color="Color.Error">Error</MudChip>
-                <MudChip Text="black" Variant="Variant.Text" Color="Color.Dark">Dark</MudChip>
-            </MudChipSet>
-        </MudCollapse>
-    </MudStack>
-</MudPaper>
+<MudText Class="mt-16" Align="Align.Center" Typo="Typo.h1" Color="Color.Warning">Projects</MudText>
 
+<Filter />
 
 <MudGrid>
     @for (int i = 0; i < 5; i++)
@@ -42,10 +27,6 @@
 </MudGrid>
 
 @code {
-    bool _expanded = false;
-
-    private void OnExpandCollapseClick()
-    {
-        _expanded = !_expanded;
-    }
+    [CascadingParameter]
+    protected MudTheme Theme { get; set; }
 }
