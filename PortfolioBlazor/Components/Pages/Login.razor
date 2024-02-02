@@ -1,12 +1,41 @@
 ﻿@page "/login"
 @rendermode InteractiveServer
 @using PortfolioBlazor.Components.MyComponents
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <PageTitle>Contact Me</PageTitle>
 
 <MudText Class="mt-16" Align="Align.Center" Typo="Typo.h1" Color="Color.Warning">Log In</MudText>
 
+
+<EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+    <InputText id="email" @bind-Value="loginModel.Email" />
+    <InputText id="password" type="password" @bind-Value="loginModel.Password" />
+    <button type="submit">Login</button>
+</EditForm>
+
 @code {
+    private LoginModel loginModel = new LoginModel();
+
+    private async Task HandleLogin()
+    {
+        var response = await Http.PostAsJsonAsync("api/account/login", loginModel);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/createdashboard");
+        }
+        else
+        {
+            
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
     [CascadingParameter]
     protected MudTheme Theme { get; set; }
 }

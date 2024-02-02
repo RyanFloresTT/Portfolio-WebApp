@@ -1,6 +1,9 @@
 ﻿@page "/blog"
 @rendermode InteractiveServer
+@inject BlogService BlogService
 @using PortfolioBlazor.Components.MyComponents
+@using PortfolioBlazor.DTOs
+@using PortfolioBlazor.Services
 
 <PageTitle>Blog</PageTitle>
 
@@ -9,24 +12,21 @@
 <Filter />
 
 <MudGrid>
-    @for (int i = 0; i < 5; i++)
+    @foreach(BlogDTO blog in blogs)
     {
-        @if (i == 0)
-        {
-            <MudItem xs="12">
-                <BlogPostCard></BlogPostCard>
-            </MudItem>
-        }
-        else
-        {
-            <MudItem xs="6">
-                <BlogPostCard></BlogPostCard>
-            </MudItem>
-        }
+        <MudItem xs="12">
+            <BlogPostCard></BlogPostCard>
+        </MudItem>
     }
 </MudGrid>
 
 @code {
+    private List<BlogDTO> blogs = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        blogs = await BlogService.GetBlogsAsync();
+    }
     [CascadingParameter]
     protected MudTheme Theme { get; set; }
 }
