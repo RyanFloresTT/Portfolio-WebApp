@@ -20,19 +20,19 @@ namespace BackEndAPI.Endpoints
         {
             var blogDtos = await db.Blogs
                 .Include(b => b.Tags)
-                .Select(b => new BlogDTO {
-                        Id = b.Id,
-                        Title = b.Title,
-                        Summary = b.Summary,
-                        Body = b.Body,
-                        CreatedOn = b.CreatedOn,
-                        TagIds = b.Tags.Select(t => t.Id).ToList(),
-                        AssociatedProjectId = b.AssociatedProjectId
+                .Select(b => new BlogDTO
+                {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Summary = b.Summary,
+                    Body = b.Body,
+                    CreatedOn = b.CreatedOn,
+                    Tags = b.Tags.Select(t => new TagDTO { Id = t.Id, Name = t.Name }).ToList(),
+                    AssociatedProjectId = b.AssociatedProjectId
                 })
                 .ToListAsync();
             return Results.Ok(blogDtos);
         }
-
         private static async Task<IResult> GetBlogById(int id, ApplicationDbContext db)
         {
             var blogDto = await db.Blogs
@@ -45,14 +45,13 @@ namespace BackEndAPI.Endpoints
                     Summary = b.Summary,
                     Body = b.Body,
                     CreatedOn = b.CreatedOn,
-                    TagIds = b.Tags.Select(t => t.Id).ToList(),
+                    Tags = b.Tags.Select(t => new TagDTO { Id = t.Id, Name = t.Name }).ToList(),
                     AssociatedProjectId = b.AssociatedProjectId
                 })
                 .FirstOrDefaultAsync();
 
             return blogDto != null ? Results.Ok(blogDto) : Results.NotFound();
         }
-
 
         private static async Task<IResult> CreateBlog(BlogDTO blogDto, ApplicationDbContext db)
         {
@@ -64,19 +63,35 @@ namespace BackEndAPI.Endpoints
                 CreatedOn = blogDto.CreatedOn,
                 AssociatedProjectId = blogDto.AssociatedProjectId
             };
-            foreach (var tagId in blogDto.TagIds)
+
+            if (blogDto.Tags != null)
             {
-                var tag = await db.Tags.FindAsync(tagId);
-                if (tag != null)
+                foreach (var tagDto in blogDto.Tags)
                 {
+                    Tag tag;
+                    if (tagDto.Id > 0)
+                    {
+                        tag = await db.Tags.FindAsync(tagDto.Id);
+                    }
+                    else
+                    {
+                        tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name);
+                        if (tag == null)
+                        {
+                            tag = new Tag { Name = tagDto.Name };
+                            db.Tags.Add(tag);
+                        }
+                    }
+
                     blog.Tags.Add(tag);
                 }
             }
 
             db.Blogs.Add(blog);
             await db.SaveChangesAsync();
-            return Results.Created($"/blogs/{blog.Id}", blog);
+            return Results.Created($"/blogs/{blog.Id}", blog); 
         }
+
 
 
         private static async Task<IResult> UpdateBlog(int id, BlogDTO blogDto, ApplicationDbContext db)
@@ -88,21 +103,33 @@ namespace BackEndAPI.Endpoints
             blog.Summary = blogDto.Summary;
             blog.Body = blogDto.Body;
             blog.AssociatedProjectId = blogDto.AssociatedProjectId;
+
             blog.Tags.Clear();
-            foreach (var tagId in blogDto.TagIds)
+            if (blogDto.Tags != null)
             {
-                var tag = await db.Tags.FindAsync(tagId);
-                if (tag != null)
+                foreach (var tagDto in blogDto.Tags)
                 {
+                    Tag tag;
+                    if (tagDto.Id > 0)
+                    {
+                        tag = await db.Tags.FindAsync(tagDto.Id);
+                    }
+                    else
+                    {
+                        tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name);
+                        if (tag == null)
+                        {
+                            tag = new Tag { Name = tagDto.Name };
+                            db.Tags.Add(tag);
+                        }
+                    }
                     blog.Tags.Add(tag);
                 }
             }
 
             await db.SaveChangesAsync();
-
             return Results.NoContent();
         }
-
 
         private static async Task<IResult> DeleteBlog(int id, ApplicationDbContext db)
         {

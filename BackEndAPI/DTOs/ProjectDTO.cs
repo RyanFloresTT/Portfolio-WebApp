@@ -10,7 +10,7 @@ namespace BackEndAPI.DTOs
         public string Body { get; set; }
         public DateTime CreatedOn { get; set; }
         public string? RepoLink { get; set; }
-        public List<int> TagIds { get; set; } = new();
-        public List<int> AssociatedBlogPostIds { get; set; } = new();
+        public List<TagDTO> Tags { get; set; } = new();
+        public List<BlogDTO> AssociatedBlogPosts { get; set; } = new();
     }
 }

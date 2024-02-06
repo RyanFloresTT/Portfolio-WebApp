@@ -7,7 +7,7 @@
         public string Summary { get; set; }
         public string Body { get; set; }
         public DateTime CreatedOn { get; set; }
-        public List<int> TagIds { get; set; } = new();
+        public List<TagDTO> Tags { get; set; } = new();
         public int? AssociatedProjectId { get; set; }
     }
 }

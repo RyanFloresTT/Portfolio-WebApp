@@ -28,18 +28,20 @@ namespace BackEndAPI.Endpoints
                     Body = p.Body,
                     CreatedOn = p.CreatedOn,
                     RepoLink = p.RepoLink,
-                    TagIds = p.Tags.Select(t => t.Id).ToList()
+                    Tags = p.Tags.Select(t => new TagDTO { Id = t.Id, Name = t.Name }).ToList(),
+                    AssociatedBlogPosts = p.AssociatedBlogPosts.Select(t => new BlogDTO { Id = t.Id, AssociatedProjectId = t.Id }).ToList(),
                 })
                 .ToListAsync();
             return Results.Ok(projectDtos);
         }
-
 
         private static async Task<IResult> GetProjectById(int id, ApplicationDbContext db)
         {
             var projectDto = await db.Projects
                 .Where(p => p.Id == id)
                 .Include(p => p.Tags)
+                .Include(p => p.AssociatedBlogPosts)
+                    .ThenInclude(blog => blog.Tags) 
                 .Select(p => new ProjectDTO
                 {
                     Id = p.Id,
@@ -48,7 +50,24 @@ namespace BackEndAPI.Endpoints
                     Body = p.Body,
                     CreatedOn = p.CreatedOn,
                     RepoLink = p.RepoLink,
-                    TagIds = p.Tags.Select(t => t.Id).ToList()
+                    Tags = p.Tags.Select(t => new TagDTO
+                    {
+                        Id = t.Id,
+                        Name = t.Name
+                    }).ToList(),
+                    AssociatedBlogPosts = p.AssociatedBlogPosts.Select(bp => new BlogDTO
+                    {
+                        Id = bp.Id,
+                        Title = bp.Title,
+                        Summary = bp.Summary,
+                        Body = bp.Body,
+                        CreatedOn = bp.CreatedOn,
+                        Tags = bp.Tags.Select(t => new TagDTO
+                        {
+                            Id = t.Id,
+                            Name = t.Name
+                        }).ToList(),
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
 
@@ -56,7 +75,7 @@ namespace BackEndAPI.Endpoints
         }
 
 
-
+        // Create a new project with associated tags and blog posts
         private static async Task<IResult> CreateProject(ProjectDTO projectDto, ApplicationDbContext db)
         {
             var project = new Project
@@ -65,36 +84,64 @@ namespace BackEndAPI.Endpoints
                 Summary = projectDto.Summary,
                 Body = projectDto.Body,
                 CreatedOn = projectDto.CreatedOn,
-                RepoLink = projectDto.RepoLink
+                RepoLink = projectDto.RepoLink,
             };
+
+            // Handle Tags
+            foreach (var tagDto in projectDto.Tags)
+            {
+                var tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name) ?? new Tag { Name = tagDto.Name };
+                project.Tags.Add(tag);
+            }
+
+            // Handle Associated Blog Posts
+            // This assumes blog posts are identified by ID and already exist
+            foreach (var blogId in projectDto.AssociatedBlogPosts)
+            {
+                var blog = await db.Blogs.FindAsync(blogId);
+                if (blog != null)
+                {
+                    project.AssociatedBlogPosts.Add(blog);
+                }
+            }
+
             db.Projects.Add(project);
             await db.SaveChangesAsync();
             return Results.Created($"/projects/{project.Id}", project);
         }
 
-
-
-        private static async Task<IResult> UpdateProject(int id, ProjectDTO projectDTO, ApplicationDbContext db)
+        // Update an existing project
+        private static async Task<IResult> UpdateProject(int id, ProjectDTO projectDto, ApplicationDbContext db)
         {
-            var project = await db.Projects.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+            var project = await db.Projects
+                .Include(p => p.Tags)
+                .Include(p => p.AssociatedBlogPosts)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (project == null)
             {
                 return Results.NotFound($"Project with ID {id} not found.");
             }
-            project.Title = projectDTO.Title;
-            project.Summary = projectDTO.Summary;
-            project.Body = projectDTO.Body;
-            project.RepoLink = projectDTO.RepoLink;
-            if (projectDTO.TagIds != null)
+
+            project.Title = projectDto.Title;
+            project.Summary = projectDto.Summary;
+            project.Body = projectDto.Body;
+            project.RepoLink = projectDto.RepoLink;
+
+            project.Tags.Clear();
+            foreach (var tagDto in projectDto.Tags)
             {
-                project.Tags.Clear();
-                foreach (var tagId in projectDTO.TagIds)
+                var tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name) ?? new Tag { Name = tagDto.Name };
+                project.Tags.Add(tag);
+            }
+
+            project.AssociatedBlogPosts.Clear();
+            foreach (var blogId in projectDto.AssociatedBlogPosts)
+            {
+                var blog = await db.Blogs.FindAsync(blogId);
+                if (blog != null)
                 {
-                    var tag = await db.Tags.FindAsync(tagId);
-                    if (tag != null)
-                    {
-                        project.Tags.Add(tag);
-                    }
+                    project.AssociatedBlogPosts.Add(blog);
                 }
             }
 
@@ -102,17 +149,19 @@ namespace BackEndAPI.Endpoints
             return Results.NoContent();
         }
 
-
-
         private static async Task<IResult> DeleteProject(int id, ApplicationDbContext db)
         {
             var project = await db.Projects.FindAsync(id);
-            if (project == null) return Results.NotFound();
+            if (project == null)
+            {
+                return Results.NotFound($"Project with ID {id} not found.");
+            }
 
             db.Projects.Remove(project);
             await db.SaveChangesAsync();
-            return Results.Ok();
+            return Results.Ok($"Project with ID {id} has been deleted.");
         }
+
     }
 
 }
