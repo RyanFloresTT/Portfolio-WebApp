@@ -9,12 +9,12 @@ namespace BackEndAPI
             : base(options)
         {
         }
-        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<BlogPost> Blogs { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Tag> Tags { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Blog>()
+            modelBuilder.Entity<BlogPost>()
                 .HasMany(b => b.Tags)
                 .WithMany(t => t.Blogs);
 

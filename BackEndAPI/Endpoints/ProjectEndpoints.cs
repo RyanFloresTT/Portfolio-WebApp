@@ -1,5 +1,4 @@
 ﻿using BackEndAPI.DTOs;
-using BackEndAPI.Middleware;
 using BackEndAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,88 +17,44 @@ namespace BackEndAPI.Endpoints
 
         private static async Task<IResult> GetProjects(ApplicationDbContext db)
         {
-            var projectDtos = await db.Projects
-                .Include(p => p.Tags)
-                .Select(p => new ProjectDTO
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Summary = p.Summary,
-                    Body = p.Body,
-                    CreatedOn = p.CreatedOn,
-                    RepoLink = p.RepoLink,
-                    Tags = p.Tags.Select(t => new TagDTO { Id = t.Id, Name = t.Name }).ToList(),
-                    AssociatedBlogPosts = p.AssociatedBlogPosts.Select(t => new BlogDTO { Id = t.Id, AssociatedProjectId = t.Id }).ToList(),
-                })
-                .ToListAsync();
-            return Results.Ok(projectDtos);
+            var projects = await db.Projects.ToListAsync();
+            return Results.Ok(projects);
         }
 
         private static async Task<IResult> GetProjectById(int id, ApplicationDbContext db)
         {
-            var projectDto = await db.Projects
-                .Where(p => p.Id == id)
-                .Include(p => p.Tags)
-                .Include(p => p.AssociatedBlogPosts)
-                    .ThenInclude(blog => blog.Tags) 
-                .Select(p => new ProjectDTO
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Summary = p.Summary,
-                    Body = p.Body,
-                    CreatedOn = p.CreatedOn,
-                    RepoLink = p.RepoLink,
-                    Tags = p.Tags.Select(t => new TagDTO
-                    {
-                        Id = t.Id,
-                        Name = t.Name
-                    }).ToList(),
-                    AssociatedBlogPosts = p.AssociatedBlogPosts.Select(bp => new BlogDTO
-                    {
-                        Id = bp.Id,
-                        Title = bp.Title,
-                        Summary = bp.Summary,
-                        Body = bp.Body,
-                        CreatedOn = bp.CreatedOn,
-                        Tags = bp.Tags.Select(t => new TagDTO
-                        {
-                            Id = t.Id,
-                            Name = t.Name
-                        }).ToList(),
-                    }).ToList()
-                })
-                .FirstOrDefaultAsync();
-
-            return projectDto != null ? Results.Ok(projectDto) : Results.NotFound();
+            var project = await db.Projects.SingleOrDefaultAsync(x => x.Id == id);
+            return Results.Ok(project);
         }
 
 
         // Create a new project with associated tags and blog posts
-        private static async Task<IResult> CreateProject(ProjectDTO projectDto, ApplicationDbContext db)
+        private static async Task<IResult> CreateProject(ProjectDTO dto, ApplicationDbContext db)
         {
             var project = new Project
             {
-                Title = projectDto.Title,
-                Summary = projectDto.Summary,
-                Body = projectDto.Body,
-                CreatedOn = projectDto.CreatedOn,
-                RepoLink = projectDto.RepoLink,
+                Title = dto.Title,
+                Summary = dto.Summary,
+                Body = dto.Body,
+                RepoLink = dto.RepoLink,
             };
 
             // Handle Tags
-            foreach (var tagDto in projectDto.Tags)
+            if (dto.TagIds.Count > 0)
             {
-                var tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name) ?? new Tag { Name = tagDto.Name };
-                project.Tags.Add(tag);
+                var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
+                foreach (var tag in tags)
+                {
+                    project.Tags.Add(tag);
+                }
             }
 
             // Handle Associated Blog Posts
             // This assumes blog posts are identified by ID and already exist
-            foreach (var blogId in projectDto.AssociatedBlogPosts)
+            if (dto.BlogPostIds.Count > 0)
             {
-                var blog = await db.Blogs.FindAsync(blogId);
-                if (blog != null)
+                var blogs = await db.Blogs.Where(t => dto.BlogPostIds.Contains(t.Id)).ToListAsync();
+                foreach (var blog in blogs)
                 {
                     project.AssociatedBlogPosts.Add(blog);
                 }
@@ -111,35 +66,36 @@ namespace BackEndAPI.Endpoints
         }
 
         // Update an existing project
-        private static async Task<IResult> UpdateProject(int id, ProjectDTO projectDto, ApplicationDbContext db)
+        private static async Task<IResult> UpdateProject(int id, ProjectDTO dto, ApplicationDbContext db)
         {
-            var project = await db.Projects
-                .Include(p => p.Tags)
-                .Include(p => p.AssociatedBlogPosts)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var project = await db.Projects.SingleAsync(t => t.Id == id);
 
             if (project == null)
             {
                 return Results.NotFound($"Project with ID {id} not found.");
             }
 
-            project.Title = projectDto.Title;
-            project.Summary = projectDto.Summary;
-            project.Body = projectDto.Body;
-            project.RepoLink = projectDto.RepoLink;
+            project.Title = dto.Title;
+            project.Summary = dto.Summary;
+            project.Body = dto.Body;
+            project.RepoLink = dto.RepoLink;
 
-            project.Tags.Clear();
-            foreach (var tagDto in projectDto.Tags)
+            project.Tags?.Clear();
+
+            if (dto.TagIds.Count > 0)
             {
-                var tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name) ?? new Tag { Name = tagDto.Name };
-                project.Tags.Add(tag);
+                var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
+                foreach (var tag in tags)
+                {
+                    project.Tags.Add(tag);
+                }
             }
 
-            project.AssociatedBlogPosts.Clear();
-            foreach (var blogId in projectDto.AssociatedBlogPosts)
+            project.AssociatedBlogPosts?.Clear();
+            if (dto.BlogPostIds.Count > 0)
             {
-                var blog = await db.Blogs.FindAsync(blogId);
-                if (blog != null)
+                var blogs = await db.Blogs.Where(t => dto.BlogPostIds.Contains(t.Id)).ToListAsync();
+                foreach (var blog in blogs)
                 {
                     project.AssociatedBlogPosts.Add(blog);
                 }
@@ -159,9 +115,7 @@ namespace BackEndAPI.Endpoints
 
             db.Projects.Remove(project);
             await db.SaveChangesAsync();
-            return Results.Ok($"Project with ID {id} has been deleted.");
+            return Results.NoContent();
         }
-
     }
-
 }

@@ -1,5 +1,4 @@
 ﻿using BackEndAPI.DTOs;
-using BackEndAPI.Middleware;
 using BackEndAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,112 +17,63 @@ namespace BackEndAPI.Endpoints
 
         private static async Task<IResult> GetBlogs(ApplicationDbContext db)
         {
-            var blogDtos = await db.Blogs
-                .Include(b => b.Tags)
-                .Select(b => new BlogDTO
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Summary = b.Summary,
-                    Body = b.Body,
-                    CreatedOn = b.CreatedOn,
-                    Tags = b.Tags.Select(t => new TagDTO { Id = t.Id, Name = t.Name }).ToList(),
-                    AssociatedProjectId = b.AssociatedProjectId
-                })
-                .ToListAsync();
-            return Results.Ok(blogDtos);
+            var blogPosts = await db.Blogs.ToListAsync();
+            return Results.Ok(blogPosts);
         }
+
         private static async Task<IResult> GetBlogById(int id, ApplicationDbContext db)
         {
-            var blogDto = await db.Blogs
-                .Where(b => b.Id == id)
-                .Include(b => b.Tags)
-                .Select(b => new BlogDTO
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    Summary = b.Summary,
-                    Body = b.Body,
-                    CreatedOn = b.CreatedOn,
-                    Tags = b.Tags.Select(t => new TagDTO { Id = t.Id, Name = t.Name }).ToList(),
-                    AssociatedProjectId = b.AssociatedProjectId
-                })
-                .FirstOrDefaultAsync();
-
-            return blogDto != null ? Results.Ok(blogDto) : Results.NotFound();
+            var blogPost = await db.Blogs.SingleOrDefaultAsync(b => b.Id == id);
+            return Results.Ok(blogPost);
         }
 
-        private static async Task<IResult> CreateBlog(BlogDTO blogDto, ApplicationDbContext db)
+        private static async Task<IResult> CreateBlog(BlogPostDTO dto, ApplicationDbContext db)
         {
-            var blog = new Blog
+            var blogPost = new BlogPost
             {
-                Title = blogDto.Title,
-                Summary = blogDto.Summary,
-                Body = blogDto.Body,
-                CreatedOn = blogDto.CreatedOn,
-                AssociatedProjectId = blogDto.AssociatedProjectId
+                Title = dto.Title,
+                Body = dto.Body,
+                Summary = dto.Summary,
+                ProjectId = dto.ProjectId
             };
 
-            if (blogDto.Tags != null)
+            if (dto.TagIds.Count > 0)
             {
-                foreach (var tagDto in blogDto.Tags)
+                var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
+                foreach (var tag in tags)
                 {
-                    Tag tag;
-                    if (tagDto.Id > 0)
-                    {
-                        tag = await db.Tags.FindAsync(tagDto.Id);
-                    }
-                    else
-                    {
-                        tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name);
-                        if (tag == null)
-                        {
-                            tag = new Tag { Name = tagDto.Name };
-                            db.Tags.Add(tag);
-                        }
-                    }
-
-                    blog.Tags.Add(tag);
+                    blogPost.Tags.Add(tag);
                 }
             }
 
-            db.Blogs.Add(blog);
+            db.Blogs.Add(blogPost);
             await db.SaveChangesAsync();
-            return Results.Created($"/blogs/{blog.Id}", blog); 
+            return Results.Created($"/blogs/{blogPost.Id}", blogPost);
         }
 
 
-
-        private static async Task<IResult> UpdateBlog(int id, BlogDTO blogDto, ApplicationDbContext db)
+        private static async Task<IResult> UpdateBlog(int id, BlogPostDTO dto, ApplicationDbContext db)
         {
-            var blog = await db.Blogs.Include(b => b.Tags).FirstOrDefaultAsync(b => b.Id == id);
-            if (blog == null) return Results.NotFound();
+            var blogPost = await db.Blogs.SingleAsync(b => b.Id == id);
 
-            blog.Title = blogDto.Title;
-            blog.Summary = blogDto.Summary;
-            blog.Body = blogDto.Body;
-            blog.AssociatedProjectId = blogDto.AssociatedProjectId;
-
-            blog.Tags.Clear();
-            if (blogDto.Tags != null)
+            if (blogPost == null)
             {
-                foreach (var tagDto in blogDto.Tags)
+                return Results.NotFound($"Project with ID {id} not found.");
+            }
+
+            blogPost.Title = dto.Title;
+            blogPost.Body = dto.Body;
+            blogPost.Summary = dto.Summary;
+            blogPost.ProjectId = dto.ProjectId;
+
+            blogPost.Tags?.Clear();
+
+            if (dto.TagIds.Count > 0)
+            {
+                var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
+                foreach (var tag in tags)
                 {
-                    Tag tag;
-                    if (tagDto.Id > 0)
-                    {
-                        tag = await db.Tags.FindAsync(tagDto.Id);
-                    }
-                    else
-                    {
-                        tag = await db.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name);
-                        if (tag == null)
-                        {
-                            tag = new Tag { Name = tagDto.Name };
-                            db.Tags.Add(tag);
-                        }
-                    }
-                    blog.Tags.Add(tag);
+                    blogPost.Tags.Add(tag);
                 }
             }
 
@@ -134,12 +84,14 @@ namespace BackEndAPI.Endpoints
         private static async Task<IResult> DeleteBlog(int id, ApplicationDbContext db)
         {
             var blog = await db.Blogs.FindAsync(id);
-            if (blog == null) return Results.NotFound();
+            if (blog == null)
+            {
+                return Results.NotFound($"Project with ID {id} not found.");
+            }
 
             db.Blogs.Remove(blog);
             await db.SaveChangesAsync();
-            return Results.Ok();
+            return Results.Ok($"Project with ID {id} has been deleted.");
         }
     }
-
 }

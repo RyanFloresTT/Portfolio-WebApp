@@ -17,33 +17,28 @@ namespace BackEndAPI.Endpoints
 
         private static async Task<IResult> GetTags(ApplicationDbContext db)
         {
-            var tags = await db.Tags
-                .Select(tag => new TagDTO { Id = tag.Id, Name = tag.Name })
-                .ToListAsync();
-            return Results.Ok(tags);
+            var tags = await db.Tags.ToListAsync();
+            return tags != null ? Results.Ok(tags) : Results.NotFound($"No Tags Found.");
         }
 
         private static async Task<IResult> GetTagById(int id, ApplicationDbContext db)
         {
-            var tag = await db.Tags
-                .Where(t => t.Id == id)
-                .Select(t => new TagDTO { Id = t.Id, Name = t.Name })
-                .FirstOrDefaultAsync();
+            var tag = await db.Tags.SingleOrDefaultAsync(b => b.Id == id);
 
             return tag != null ? Results.Ok(tag) : Results.NotFound($"Tag with ID {id} not found.");
         }
 
-        private static async Task<IResult> CreateTag(ApplicationDbContext db, TagDTO tagDto)
+        private static async Task<IResult> CreateTag(ApplicationDbContext db, TagDTO dto)
         {
-            var tag = new Tag { Name = tagDto.Name };
+            var tag = new Tag { Name = dto.Name };
             db.Tags.Add(tag);
             await db.SaveChangesAsync();
-            return Results.Created($"/tags/{tag.Id}", new TagDTO { Id = tag.Id, Name = tag.Name });
+            return Results.Created($"/tags/{tag.Id}", tag);
         }
 
         private static async Task<IResult> UpdateTag(int id, ApplicationDbContext db, TagDTO tagDto)
         {
-            var tag = await db.Tags.FindAsync(id);
+            var tag = await db.Tags.SingleAsync(b => b.Id == id);
             if (tag == null)
             {
                 return Results.NotFound($"Tag with ID {id} not found.");
@@ -51,7 +46,7 @@ namespace BackEndAPI.Endpoints
 
             tag.Name = tagDto.Name;
             await db.SaveChangesAsync();
-            return Results.Ok(new TagDTO { Id = tag.Id, Name = tag.Name });
+            return Results.Ok(tag);
         }
 
         private static async Task<IResult> DeleteTag(int id, ApplicationDbContext db)
