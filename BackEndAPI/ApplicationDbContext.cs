@@ -16,11 +16,13 @@ namespace BackEndAPI
         {
             modelBuilder.Entity<BlogPost>()
                 .HasMany(b => b.Tags)
-                .WithMany(t => t.Blogs);
+                .WithMany(t => t.Blogs)
+                .UsingEntity(j => j.ToTable("BlogPostTags"));
 
             modelBuilder.Entity<Project>()
-                .HasMany(p => p.Tags)
-                .WithMany(t => t.Projects);
+                .HasMany(b => b.Tags)
+                .WithMany(t => t.Projects)
+                .UsingEntity(j => j.ToTable("ProjectTags"));
         }
     }    
 }

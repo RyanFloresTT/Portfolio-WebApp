@@ -3,6 +3,7 @@ using System;
 using BackEndAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackEndAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240213044032_RemoveBlogObjectFromProject")]
+    partial class RemoveBlogObjectFromProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -43,8 +46,6 @@ namespace BackEndAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("Blogs");
                 });
 
@@ -53,6 +54,10 @@ namespace BackEndAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("BlogPostIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Body")
                         .IsRequired()
@@ -83,87 +88,44 @@ namespace BackEndAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("BlogPostId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("BlogPostId");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("BlogPostTag", b =>
+            modelBuilder.Entity("BackEndAPI.Models.Tag", b =>
                 {
-                    b.Property<int>("BlogsId")
-                        .HasColumnType("INTEGER");
+                    b.HasOne("BackEndAPI.Models.BlogPost", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("BlogPostId");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BlogsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BlogPostTags", (string)null);
-                });
-
-            modelBuilder.Entity("ProjectTag", b =>
-                {
-                    b.Property<int>("ProjectsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ProjectsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ProjectTags", (string)null);
+                    b.HasOne("BackEndAPI.Models.Project", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("ProjectId");
                 });
 
             modelBuilder.Entity("BackEndAPI.Models.BlogPost", b =>
                 {
-                    b.HasOne("BackEndAPI.Models.Project", "Project")
-                        .WithMany("AssociatedBlogPosts")
-                        .HasForeignKey("ProjectId");
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("BlogPostTag", b =>
-                {
-                    b.HasOne("BackEndAPI.Models.BlogPost", null)
-                        .WithMany()
-                        .HasForeignKey("BlogsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackEndAPI.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectTag", b =>
-                {
-                    b.HasOne("BackEndAPI.Models.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackEndAPI.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("BackEndAPI.Models.Project", b =>
                 {
-                    b.Navigation("AssociatedBlogPosts");
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

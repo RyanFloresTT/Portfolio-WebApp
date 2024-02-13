@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace BackEndAPI.Models
 {
@@ -15,9 +17,11 @@ namespace BackEndAPI.Models
 
         // Foreign key to Project (nullable)
         public int? ProjectId { get; set; }
+        [JsonIgnore]
         public Project? Project { get; set; }
 
-        // Tags for filtering
+        // Tags for filtering   
+        [JsonIgnore]
         public List<Tag> Tags { get; set; } = new();
     }
 

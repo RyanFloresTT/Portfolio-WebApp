@@ -17,7 +17,7 @@ namespace BackEndAPI.Endpoints
 
         private static async Task<IResult> GetBlogs(ApplicationDbContext db)
         {
-            var blogPosts = await db.Blogs.ToListAsync();
+            var blogPosts = await db.Blogs.Include(b => b.Tags).ToListAsync();
             return Results.Ok(blogPosts);
         }
 
@@ -29,22 +29,17 @@ namespace BackEndAPI.Endpoints
 
         private static async Task<IResult> CreateBlog(BlogPostDTO dto, ApplicationDbContext db)
         {
+            var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
+            var project = await db.Projects.Where(p => dto.ProjectId == p.Id).ToListAsync();
             var blogPost = new BlogPost
             {
                 Title = dto.Title,
                 Body = dto.Body,
                 Summary = dto.Summary,
-                ProjectId = dto.ProjectId
+                ProjectId = dto.ProjectId,
+                Project = project[0],
+                Tags = tags,
             };
-
-            if (dto.TagIds.Count > 0)
-            {
-                var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
-                foreach (var tag in tags)
-                {
-                    blogPost.Tags.Add(tag);
-                }
-            }
 
             db.Blogs.Add(blogPost);
             await db.SaveChangesAsync();
@@ -54,6 +49,11 @@ namespace BackEndAPI.Endpoints
 
         private static async Task<IResult> UpdateBlog(int id, BlogPostDTO dto, ApplicationDbContext db)
         {
+            if (dto.ProjectId.HasValue && !await db.Projects.AnyAsync(p => p.Id == dto.ProjectId.Value))
+            {
+                return Results.NotFound($"Project with ID {dto.ProjectId} not found.");
+            }
+
             var blogPost = await db.Blogs.SingleAsync(b => b.Id == id);
 
             if (blogPost == null)
@@ -66,16 +66,23 @@ namespace BackEndAPI.Endpoints
             blogPost.Summary = dto.Summary;
             blogPost.ProjectId = dto.ProjectId;
 
-            blogPost.Tags?.Clear();
 
-            if (dto.TagIds.Count > 0)
+            if (dto.TagIds.Any())
             {
-                var tags = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).ToListAsync();
-                foreach (var tag in tags)
+                var existingTagIds = await db.Tags.Where(t => dto.TagIds.Contains(t.Id)).Select(t => t.Id).ToListAsync();
+                if (dto.TagIds.Count != existingTagIds.Count)
+                {
+                    return Results.NotFound("One or more tags not found.");
+                }
+
+                blogPost.Tags?.Clear();
+                var tagsToAdd = await db.Tags.Where(t => existingTagIds.Contains(t.Id)).ToListAsync();
+                foreach (var tag in tagsToAdd)
                 {
                     blogPost.Tags.Add(tag);
                 }
             }
+
 
             await db.SaveChangesAsync();
             return Results.NoContent();
